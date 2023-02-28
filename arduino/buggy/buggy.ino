@@ -8,12 +8,17 @@
   Released into the public domain.
 */
 
-
+// Includes
 #include "Motores.h"
 #include "Ultrassom.h"
 #include "Encoder.h"
 #include "Baterias.h"
 #include "Linha.h"
+
+// -Definições
+/* dist = d_tempo/58 => d_tempo = dist*58 = 4*58 = 232 => não precisa de divisão ou float, conta parece estar errada de alguma forma */
+#define MAX_TIME 232
+
 
 /* Tarefas básicas do exemplo */
 void tarefa_1();
@@ -24,7 +29,7 @@ volatile bool exibir_estado = true;
 Motores motores;
 Baterias baterias;
 Linha seguidor_linha;
-Ultrassom ultrassom_1(Ultrassom::ECHO1, Ultrassom::TRIG1);
+Ultrassom ultrassom_1(Ultrassom::ECHO1, Ultrassom::TRIG1); // pinos 2 e 4 respectivamente
 Encoder encoder_0 (Encoder::D0);
 
 
@@ -51,8 +56,11 @@ void loop() {
   
   encoder_0.atualizar();
   ultrassom_1.atualizar();
+  // Para carrinho caso detectar um obstáculo => não funciona conforme esperado
+  while(ultrassom_1.obter_distancia() < MAX_TIME){ ultrassom_1.atualizar(); Serial.println("Standby"); /* Mantém carrinho parado enquanto dist <= 4 */}
 
- 
+  motores.frente(200);
+  
   tarefa_1();
   tarefa_2();
 }
@@ -63,7 +71,7 @@ void tarefa_1(){
   /* Caso tenha recebido algum dado do PC */
   if (Serial.available()) {
      char dado_recebido = Serial.read();
-     
+     // Pode ser testado com LEDs => sem problemas
       if (dado_recebido == 'p')
           motores.parar();          
       else if (dado_recebido == 'f')
@@ -76,7 +84,7 @@ void tarefa_1(){
           motores.direita(150);
       else if (dado_recebido == 's') {
         if (exibir_estado == true)
-          exibir_estado = false;
+          exibir_estado = true;
         else
           exibir_estado = true;        
       }
@@ -110,8 +118,5 @@ void tarefa_2(){
     Serial.println("");
     
     tempo_atual = millis();    
-  }  
+  }
 }
-
-
-

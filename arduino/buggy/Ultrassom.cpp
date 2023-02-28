@@ -26,7 +26,7 @@ unsigned long Ultrassom::medir(){
 
   distancia = pulseIn(_echo_pin, HIGH);
   // Calcula distância em centímetros (dist_cm = tempo_retorno/58)
-  distancia = distancia * 0.01724137931; // !>PODE SER LENTO<!
+  //distancia = distancia * 0.01724137931; // !>LENTO<!
   /*
   d = (duration*.0343)/2; 
   distancia = distancia * 1715;
@@ -53,4 +53,3 @@ void Ultrassom::atualizar(){
     tempo = millis();   
   }
 }
-

@@ -46,11 +46,10 @@ void Motores::frente(unsigned char velocidade){
 
   /*digitalWrite(M1, HIGH);  
   digitalWrite(M2, HIGH); */
-  velocidade &= 0xff; // Retorna valor igual a velocidade? > checar
+  velocidade &= 0xff; // Retorna valor igual a velocidade? > checar com professor
 
   analogWrite(M1, velocidade);
   analogWrite(M2, velocidade);
-
 }
 
 void Motores::tras(unsigned char velocidade){
@@ -62,9 +61,8 @@ void Motores::tras(unsigned char velocidade){
 
   analogWrite(M1N, velocidade);
   analogWrite(M2N, velocidade);
-
 }
-
+// Horário
 void Motores::direita(unsigned char velocidade){
   parar();
   velocidade &= 0xff;
@@ -74,10 +72,8 @@ void Motores::direita(unsigned char velocidade){
 
   analogWrite(M1, velocidade);
   analogWrite(M2N, velocidade);
-
-  
 }
-
+// Antihorário
 void Motores::esquerda(unsigned char velocidade){
   parar();
   velocidade &= 0xff;
