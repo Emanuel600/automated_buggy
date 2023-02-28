@@ -25,13 +25,16 @@ unsigned long Ultrassom::medir(){
   digitalWrite(_trigger_pin, LOW);
 
   distancia = pulseIn(_echo_pin, HIGH);
-
+  // Calcula distância em centímetros (dist_cm = tempo_retorno/58)
+  distancia = distancia * 0.01724137931; // !>PODE SER LENTO<!
   /*
   d = (duration*.0343)/2; 
   distancia = distancia * 1715;
   */
 
-  /* Retorna valor proporcional sem conversão para cm */
+  /* Originalmente, retornava um valor PROPORCIONAL - valor de distância deveria
+   ser calculado antes de escrever o código */
+
   return distancia;
 }
 

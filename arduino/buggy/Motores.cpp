@@ -2,6 +2,22 @@
   Motores.cpp - Biblioteca para controle de motores do Buggy 4x4.
   Created by Renan Augusto Starke, July 22, 2021.
   Released into the public domain.
+
+  Configuração - Motores:
+
+  M1  -  M2
+
+      C
+
+  M1N -  M2N
+
+  Motores MxN estão INVERTIDOS (sentido anti-horário de rotação)
+  Pinout (Conforme definido no enum):
+  M1 : 6
+  M1N: 5
+  --
+  M2 : 11
+  M2N: 3
 */
 
 #include "Motores.h"
@@ -30,7 +46,7 @@ void Motores::frente(unsigned char velocidade){
 
   /*digitalWrite(M1, HIGH);  
   digitalWrite(M2, HIGH); */
-  velocidade &= 0xff;
+  velocidade &= 0xff; // Retorna valor igual a velocidade? > checar
 
   analogWrite(M1, velocidade);
   analogWrite(M2, velocidade);
