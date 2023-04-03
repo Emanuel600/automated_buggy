@@ -5,6 +5,8 @@
 */
 
 #include "Ultrassom.h"
+// Retorna menor valor entre num1 e num2
+#define GET_SMALLER(num1, num2) ( (num1 < num2) ? num1 : num2 )
 
 Ultrassom::Ultrassom(unsigned char echo_pin, unsigned char trigger_pin)
 {
@@ -19,21 +21,16 @@ Ultrassom::Ultrassom(unsigned char echo_pin, unsigned char trigger_pin)
 }
 
 unsigned long Ultrassom::medir(){
-
-  digitalWrite(_trigger_pin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(_trigger_pin, LOW);
-
-  distancia = pulseIn(_echo_pin, HIGH);
-  // Calcula distância em centímetros (dist_cm = tempo_retorno/58)
-  //distancia = distancia * 0.01724137931; // !>LENTO<!
-  /*
-  d = (duration*.0343)/2; 
-  distancia = distancia * 1715;
-  */
-
-  /* Originalmente, retornava um valor PROPORCIONAL - valor de distância deveria
-   ser calculado antes de escrever o código */
+  short unsigned med[3];
+  for (int i = 0; i<3; i++){
+    digitalWrite(_trigger_pin, HIGH);
+    delayMicroseconds(15);
+    digitalWrite(_trigger_pin, LOW);
+    med[i] = pulseIn(_echo_pin, HIGH);
+  }
+  // Distancia recebe o menor dos três valores medidos (decisão arbitrária)
+  distancia = GET_SMALLER(med[0], med[1]);
+  distancia = GET_SMALLER(distancia, med[2]);
 
   return distancia;
 }
@@ -44,11 +41,10 @@ unsigned long Ultrassom::obter_distancia(){
 
 
 void Ultrassom::atualizar(){
-    
-  /* Mede a distância a cada 500 ms */
-  if (millis() - tempo >= 500)
+  /* Mede a distância a cada 200 ms */
+  if (millis() - tempo >= 200)
   {
-
+    // > 6 ms
     distancia = medir();          
     tempo = millis();   
   }

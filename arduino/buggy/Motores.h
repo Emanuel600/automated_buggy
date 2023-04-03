@@ -17,11 +17,12 @@ class Motores
     void tras(unsigned char velocidade);
     void esquerda(unsigned char velocidade);
     void direita(unsigned char velocidade);
+    void polar(float v_lin, float w);
     void parar();
     
   private:
     /* Pinos de hardware. Suportam analogWrite() */
-    enum pins {M1 = 6, M1N = 5, M2 = 11, M2N = 3};
+    enum pins {M1 = 3, M1N = 11, M2 = 5, M2N = 6};
 };
 
 #endif

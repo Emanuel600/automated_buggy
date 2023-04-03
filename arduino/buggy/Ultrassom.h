@@ -17,7 +17,7 @@ class Ultrassom
     unsigned long obter_distancia();
 
     enum SENSOR_0 { ECHO0 = 8, TRIG0 = 7};
-    enum SENSOR_1 { ECHO1 = 2, TRIG1 = 4};
+    enum SENSOR_1 { ECHO1 = 2, TRIG1 = 3};
     
   private:    
     unsigned long medir();

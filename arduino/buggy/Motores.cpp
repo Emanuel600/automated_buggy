@@ -9,18 +9,26 @@
 
       C
 
-  M1N -  M2N
-
-  Motores MxN estão INVERTIDOS (sentido anti-horário de rotação)
+      w
+   \=====/  => 13.65 cm de largura do eixo
+            => 6.825 cm de eixo com relação ao centro de massa
+            => Roda de ~6.5 cm de comprimento
+            => ~12 cm de comprimento
+  Motores MxN estão simplesmente INVERTIDOS, ligando Vcc em GND e vice-versa
   Pinout (Conforme definido no enum):
-  M1 : 6
-  M1N: 5
+  M1 : 6  => Pin 1
+  M1N: 5  => Pin 2
   --
-  M2 : 11
-  M2N: 3
+  M2 : 11 => Pin 4
+  M2N: 3  => Pin 3
+
+  Controla a ponte H (driver - L298N), não os motores. Enables não serão utilizados
 */
 
 #include "Motores.h"
+
+#define RAIO_ROBO 6.825
+#define CONV_FACT 2.5
 
 Motores::Motores()
 {
@@ -83,4 +91,13 @@ void Motores::esquerda(unsigned char velocidade){
 
   analogWrite(M2, velocidade);
   analogWrite(M1N, velocidade);
+}
+// Movimento genérico
+void Motores::polar(float vel_lin, float w){
+  float dif_vel = RAIO_ROBO * w;
+  
+  float v_esq   = CONV_FACT*(vel_lin + dif_vel);
+  float v_dir   = CONV_FACT*(vel_lin - dif_vel);
+  (v_esq > 0) ? analogWrite(M2, char(v_esq)) : analogWrite(M2N, char(-v_esq));
+  (v_dir > 0) ? analogWrite(M1, char(v_dir)) : analogWrite(M1N, char(-v_dir));
 }

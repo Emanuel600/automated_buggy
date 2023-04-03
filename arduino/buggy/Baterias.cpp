@@ -119,6 +119,3 @@ ISR(ADC_vect)
   if (canal > Baterias::Bateria_0)
     canal = Baterias::Bateria_1; 
 }
-
-
-
