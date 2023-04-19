@@ -27,8 +27,8 @@
 
 #include "Motores.h"
 
-#define RAIO_ROBO 6.825
-#define CONV_FACT 2.5
+#define LARG_EIXO 13.65
+#define CONV_FACT 4.35
 
 Motores::Motores()
 {
@@ -92,12 +92,25 @@ void Motores::esquerda(unsigned char velocidade){
   analogWrite(M2, velocidade);
   analogWrite(M1N, velocidade);
 }
+
 // Movimento genérico
 void Motores::polar(float vel_lin, float w){
-  float dif_vel = RAIO_ROBO * w;
+  parar();
+  float dif_vel = LARG_EIXO * w;
   
-  float v_esq   = CONV_FACT*(vel_lin + dif_vel);
-  float v_dir   = CONV_FACT*(vel_lin - dif_vel);
-  (v_esq > 0) ? analogWrite(M2, char(v_esq)) : analogWrite(M2N, char(-v_esq));
-  (v_dir > 0) ? analogWrite(M1, char(v_dir)) : analogWrite(M1N, char(-v_dir));
+  int v_esq    = int(ceil(CONV_FACT*(vel_lin + dif_vel)));
+  int v_dir    = int(ceil(CONV_FACT*(vel_lin - dif_vel)));
+
+  unsigned char r_esq   = abs(v_esq) & 0xFF;
+  unsigned char r_dir   = abs(v_dir) & 0xFF;
+  
+  Serial.print("v_esq: ");
+  Serial.println(v_esq);
+  Serial.print("v_dir: ");
+  Serial.println(v_dir);
+  Serial.print("v_diff: ");
+  Serial.println(dif_vel);
+  
+  (v_esq > 0) ? analogWrite(M2, r_esq) : analogWrite(M2N, r_esq);
+  (v_dir > 0) ? analogWrite(M1, r_dir) : analogWrite(M1N, r_dir);
 }
