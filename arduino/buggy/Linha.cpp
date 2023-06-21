@@ -75,3 +75,11 @@ unsigned char Linha::obter_esquerda(){
 unsigned char Linha::obter_direita(){
   return Linha::direita;
 }
+
+unsigned char Linha::detectou(){
+  return (Linha::esquerda | Linha::direita);
+}
+
+unsigned char Linha::detectou_duas(){
+  return (Linha::esquerda & Linha::direita);
+}

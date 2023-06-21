@@ -10,6 +10,9 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#define ENC_CONV 0.98960168588
+#define ANG_CONV 3.34225380493
+
 volatile unsigned long Encoder::pulsos_d0 = 0;
 volatile unsigned long Encoder::pulsos_d1 = 0;
 
@@ -50,41 +53,57 @@ ISR(PCINT0_vect)
   /* Teste para D1 */
   if (PINB & (1 << PB4))
     Encoder::pulsos_d1++;
-
-
-
 }
 
-void Encoder::atualizar(){
-  unsigned long pulsos = 0;
-  
-  /* Mede a velocidade a cada 500 ms */
-  if (millis() - tempo >= 500)
+void Encoder::atualizar(){  
+  /* Mede a velocidade a cada 250 ms */
+  if (millis() - tempo >= 250)
   {
     /* Desabilita interrupcao durante o calculo */       
     if (_pino == Encoder::D0){
       /* Desabilita interrupcao durante o calculo */
-      PCMSK0 &= ~(1 << PCINT5);
-      pulsos = pulsos_d0;
+      PCMSK0    &= ~(1 << PCINT5);
+      _pulsos    = pulsos_d0;
       pulsos_d0 = 0;
     }
     else {
-      PCMSK0 &= ~(1 << PCINT4);
-      pulsos = pulsos_d1;
+      PCMSK0    &= ~(1 << PCINT4);
+      _pulsos    = pulsos_d1;
       pulsos_d1 = 0;
     }
-      
-    /* velocidade = (60 * 1000 / pulsos_por_volta ) / (millis() - tempo) * pulsos; */
-    velocidade = pulsos << 2;          //Rever: usar 500ms para multipliar por 2
+    
     tempo = millis();
 
     if (_pino == Encoder::D0)
       PCMSK0 |= (1 << PCINT5);
     else
-      PCMSK0 |= (1 << PCINT4);    
+      PCMSK0 |= (1 << PCINT4);
   }  
+  _IsUpdated = true;
 }
 
-unsigned long Encoder::obter_velocidade(){
-  return velocidade;
+float Encoder::obter_velocidade(){
+  return ((_pulsos << 2) * ENC_CONV);
+}
+
+/*
+  21 - 2*PI
+  21/(2*PI)
+  3.34225380493
+*/
+
+float Encoder::obter_velocidade_angular(){
+  return ((_pulsos << 2) * ANG_CONV);
+}
+
+unsigned long Encoder::obter_pulsos(){
+  return _pulsos;
+}
+
+void Encoder::WasUpdated(){
+  _IsUpdated = false;
+}
+
+uint8_t Encoder::IsUpdated(){
+  return _IsUpdated;
 }

@@ -15,16 +15,22 @@ class Encoder
     static volatile unsigned long pulsos_d1;
     
     Encoder(unsigned char pino);
-    unsigned long obter_velocidade();
-    void atualizar();    
+    float obter_velocidade();
+    float obter_velocidade_angular();
+    unsigned long obter_pulsos();
+    float obter_w();
+    void atualizar();
+    uint8_t IsUpdated();
+    void WasUpdated();
 
     enum SENSORES { D0 = 13, D1 = 12};
     
   private:    
-    unsigned char _pino;          
-    unsigned long velocidade;    
+    unsigned char _pino;
     unsigned long tempo;
- 
+    
+    unsigned long _pulsos;
+    uint8_t       _IsUpdated;
 };
 
 #endif

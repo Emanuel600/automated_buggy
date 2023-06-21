@@ -18,19 +18,24 @@ Ultrassom::Ultrassom(unsigned char echo_pin, unsigned char trigger_pin)
   /* Guarda informaçẽos dos pinos */
   _echo_pin = echo_pin;
   _trigger_pin = trigger_pin;
+
+  distancia = medir();
 }
 
 unsigned long Ultrassom::medir(){
   short unsigned med[3];
   for (int i = 0; i<3; i++){
     digitalWrite(_trigger_pin, HIGH);
-    delayMicroseconds(15);
+    delayMicroseconds(10);
     digitalWrite(_trigger_pin, LOW);
     med[i] = pulseIn(_echo_pin, HIGH);
   }
   // Distancia recebe o menor dos três valores medidos (decisão arbitrária)
   distancia = GET_SMALLER(med[0], med[1]);
   distancia = GET_SMALLER(distancia, med[2]);
+
+  Serial.print("Distancia medida: ");
+  Serial.println(obter_distancia());
 
   return distancia;
 }
@@ -41,10 +46,9 @@ unsigned long Ultrassom::obter_distancia(){
 
 
 void Ultrassom::atualizar(){
-  /* Mede a distância a cada 200 ms */
-  if (millis() - tempo >= 200)
+  /* Mede a distância a cada 250 ms */
+  if (millis() - tempo >= 250)
   {
-    // > 6 ms
     distancia = medir();          
     tempo = millis();   
   }

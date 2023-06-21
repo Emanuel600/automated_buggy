@@ -27,11 +27,15 @@
 
 #include "Motores.h"
 
-#define LARG_EIXO 13.65
-#define CONV_FACT 4.35
+#define LARG_EIXO 6.85
+#define CONV_FACT 6.5
+
+#define CONV_INT  650
+#define LARG_INT  685
 
 Motores::Motores()
 {
+  parar();
   /* Configuração dos pinos */
   pinMode(M1, OUTPUT);
   pinMode(M1N, OUTPUT);
@@ -41,6 +45,8 @@ Motores::Motores()
 
 void Motores::parar()
 {
+  _dir_esq = 0;
+  _dir_dir = 0;
   /* Desliga todos os motores */
   digitalWrite(M1, LOW);
   digitalWrite(M1N, LOW);
@@ -58,6 +64,9 @@ void Motores::frente(unsigned char velocidade){
 
   analogWrite(M1, velocidade);
   analogWrite(M2, velocidade);
+
+  _dir_esq = 1;
+  _dir_dir = 1;
 }
 
 void Motores::tras(unsigned char velocidade){
@@ -69,6 +78,9 @@ void Motores::tras(unsigned char velocidade){
 
   analogWrite(M1N, velocidade);
   analogWrite(M2N, velocidade);
+
+  _dir_esq = -1;
+  _dir_dir = -1;
 }
 // Horário
 void Motores::direita(unsigned char velocidade){
@@ -80,6 +92,9 @@ void Motores::direita(unsigned char velocidade){
 
   analogWrite(M1, velocidade);
   analogWrite(M2N, velocidade);
+
+  _dir_esq = 1;
+  _dir_dir = -1;
 }
 // Antihorário
 void Motores::esquerda(unsigned char velocidade){
@@ -91,6 +106,9 @@ void Motores::esquerda(unsigned char velocidade){
 
   analogWrite(M2, velocidade);
   analogWrite(M1N, velocidade);
+
+  _dir_esq = -1;
+  _dir_dir = 1;
 }
 
 // Movimento genérico
@@ -104,13 +122,26 @@ void Motores::polar(float vel_lin, float w){
   unsigned char r_esq   = abs(v_esq) & 0xFF;
   unsigned char r_dir   = abs(v_dir) & 0xFF;
   
-  Serial.print("v_esq: ");
-  Serial.println(v_esq);
-  Serial.print("v_dir: ");
-  Serial.println(v_dir);
-  Serial.print("v_diff: ");
-  Serial.println(dif_vel);
-  
-  (v_esq > 0) ? analogWrite(M2, r_esq) : analogWrite(M2N, r_esq);
-  (v_dir > 0) ? analogWrite(M1, r_dir) : analogWrite(M1N, r_dir);
+  if(v_esq > 0){
+    analogWrite(M2, r_esq);
+    _dir_esq = 1;
+  } else{
+    analogWrite(M2N, r_esq);
+    _dir_esq = -1;
+  }
+  if(v_dir > 0){
+    analogWrite(M1, r_dir);
+    _dir_dir = 1;
+  } else{
+    analogWrite(M1N, r_dir);
+    _dir_dir = -1;
+  }
+}
+
+int8_t Motores::dir_esq(){
+  return _dir_esq;
+}
+
+int8_t Motores::dir_dir(){
+  return _dir_dir;
 }
